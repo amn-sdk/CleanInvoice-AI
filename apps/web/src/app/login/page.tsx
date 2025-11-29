@@ -34,8 +34,8 @@ export default function LoginPage() {
 
             setAuth(userResponse.data, access_token);
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.response?.data?.detail || 'Login failed');
+        } catch (error: unknown) {
+            setError((error as any).response?.data?.detail || 'Login failed');
         } finally {
             setLoading(false);
         }

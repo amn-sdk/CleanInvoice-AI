@@ -23,8 +23,13 @@ export default function RegisterPage() {
         try {
             await apiClient.post('/auth/register', formData);
             router.push('/login?registered=true');
-        } catch (err: any) {
-            setError(err.response?.data?.detail || 'Registration failed');
+        } catch (error: unknown) {
+            // Check if the error is an AxiosError and has a response
+            if (typeof error === 'object' && error !== null && 'response' in error && typeof (error as any).response?.data?.detail === 'string') {
+                setError((error as any).response.data.detail);
+            } else {
+                setError('Registration failed');
+            }
         } finally {
             setLoading(false);
         }

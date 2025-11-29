@@ -3,6 +3,12 @@
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api';
 
+interface Invoice {
+    id: string;
+    total_ttc: string;
+    status: string;
+}
+
 interface Stats {
     total_invoices: number;
     total_revenue: number;
@@ -28,9 +34,9 @@ export default function DashboardPage() {
                 // Calculate basic stats
                 const stats = {
                     total_invoices: invoices.length,
-                    total_revenue: invoices.reduce((sum: number, inv: any) => sum + parseFloat(inv.total_ttc), 0),
-                    pending_invoices: invoices.filter((inv: any) => inv.status === 'ISSUED').length,
-                    late_invoices: invoices.filter((inv: any) => inv.status === 'LATE').length,
+                    total_revenue: invoices.reduce((sum: number, inv: Invoice) => sum + parseFloat(inv.total_ttc), 0),
+                    pending_invoices: invoices.filter((inv: Invoice) => inv.status === 'ISSUED').length,
+                    late_invoices: invoices.filter((inv: Invoice) => inv.status === 'LATE').length,
                 };
 
                 setStats(stats);
@@ -44,7 +50,7 @@ export default function DashboardPage() {
         fetchStats();
     }, []);
 
-    const StatCard = ({ title, value, icon, color }: any) => (
+    const StatCard = ({ title, value, icon, color }: { title: string; value: string | number; icon: string; color: string }) => (
         <div className={`bg-white p-6 rounded-xl shadow-md border-l-4 ${color}`}>
             <div className="flex items-center justify-between">
                 <div>
