@@ -83,4 +83,6 @@ jobs:
 
       - name: Build Frontend
         working-directory: apps/web
+        env:
+          NEXT_PRIVATE_DISABLE_TURBO: "1"
         run: npm run build
