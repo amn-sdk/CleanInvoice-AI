@@ -42,7 +42,7 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
         role=user_data.role
     )
     db.add(new_user)
-    db.commit()
+    db.flush() # Generate ID without committing transaction
     db.refresh(new_user)
     
     # Audit log

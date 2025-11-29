@@ -5,7 +5,7 @@ import os
 
 # Use Docker service name 'db' if running in container, or localhost if running locally
 # For now, we assume localhost for running migrations from host, but this should be configurable
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgrespassword@localhost:5432/cleaninvoice")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgrespassword@localhost:5433/cleaninvoice")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

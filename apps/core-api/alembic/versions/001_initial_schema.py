@@ -177,25 +177,11 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id')
     )
 
-    # Audit Logs
-    op.create_table('audit_logs',
-        sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-        sa.Column('company_id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('entity_type', sa.String(length=50), nullable=True),
-        sa.Column('entity_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('action', sa.String(length=20), nullable=True),
-        sa.Column('changes', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
-        sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-        sa.ForeignKeyConstraint(['company_id'], ['companies.id'], ),
-        sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
-        sa.PrimaryKeyConstraint('id')
-    )
+
 
 
 def downgrade() -> None:
-    op.drop_table('audit_logs')
+
     op.drop_table('collection_events')
     op.drop_table('collection_cases')
     op.drop_table('payments')

@@ -1,5 +1,5 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from weasyprint import HTML
+
 import os
 from pathlib import Path
 
@@ -30,7 +30,14 @@ class PDFService:
         html_content = template.render(**invoice_data)
         
         # Generate PDF
-        pdf_bytes = HTML(string=html_content).write_pdf()
+        try:
+            from weasyprint import HTML
+            pdf_bytes = HTML(string=html_content).write_pdf()
+        except OSError as e:
+            print(f"Error loading WeasyPrint dependencies: {e}")
+            raise ImportError("PDF generation failed: Missing system dependencies (pango, libffi). Please install them via 'brew install pango libffi glib'.")
+        except ImportError:
+             raise ImportError("WeasyPrint not installed.")
         
         # Optionally save to file
         if output_path:
