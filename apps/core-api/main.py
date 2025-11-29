@@ -8,10 +8,14 @@ app = FastAPI(
     description="Modern invoice management with AI-powered features and Factur-X compliance"
 )
 
+import os
+
 # CORS middleware for frontend
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js dev server
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

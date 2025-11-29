@@ -45,6 +45,19 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
+    # Audit log
+    from app.utils.audit import log_audit
+    log_audit(
+        db=db,
+        company_id=company.id,
+        user_id=new_user.id,
+        entity_type="USER",
+        entity_id=new_user.id,
+        action="CREATE",
+        changes={"email": new_user.email, "role": new_user.role}
+    )
+    db.commit()
+    
     return new_user
 
 @router.post("/login", response_model=Token)
