@@ -24,9 +24,20 @@ export default function RegisterPage() {
             await apiClient.post('/auth/register', formData);
             router.push('/login?registered=true');
         } catch (error: unknown) {
-            // Check if the error is an AxiosError and has a response
-            if (typeof error === 'object' && error !== null && 'response' in error && typeof (error as any).response?.data?.detail === 'string') {
-                setError((error as any).response.data.detail);
+            // Type guard for Axios error
+            interface AxiosError {
+                response?: {
+                    data?: {
+                        detail?: string;
+                    };
+                };
+            }
+            const isAxiosError = (err: unknown): err is AxiosError => {
+                return typeof err === 'object' && err !== null && 'response' in err;
+            };
+
+            if (isAxiosError(error) && error.response?.data?.detail) {
+                setError(error.response.data.detail);
             } else {
                 setError('Registration failed');
             }

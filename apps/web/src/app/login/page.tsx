@@ -35,7 +35,23 @@ export default function LoginPage() {
             setAuth(userResponse.data, access_token);
             router.push('/dashboard');
         } catch (error: unknown) {
-            setError((error as any).response?.data?.detail || 'Login failed');
+            // Type guard for Axios error
+            interface AxiosError {
+                response?: {
+                    data?: {
+                        detail?: string;
+                    };
+                };
+            }
+            const isAxiosError = (err: unknown): err is AxiosError => {
+                return typeof err === 'object' && err !== null && 'response' in err;
+            };
+
+            if (isAxiosError(error) && error.response?.data?.detail) {
+                setError(error.response.data.detail);
+            } else {
+                setError('Login failed');
+            }
         } finally {
             setLoading(false);
         }
