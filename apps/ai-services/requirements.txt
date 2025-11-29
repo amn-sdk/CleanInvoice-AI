@@ -9,3 +9,5 @@ qdrant-client
 langchain
 langgraph
 openai
+pytesseract
+pdf2image

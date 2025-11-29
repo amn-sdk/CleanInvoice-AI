@@ -12,3 +12,4 @@ email-validator
 weasyprint
 factur-x
 jinja2
+httpx
