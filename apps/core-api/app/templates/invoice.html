@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4F46E5;
+        }
+        .company-info {
+            max-width: 50%;
+        }
+        .invoice-info {
+            text-align: right;
+        }
+        .invoice-title {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #4F46E5;
+            margin-bottom: 10px;
+        }
+        .invoice-number {
+            font-size: 14pt;
+            color: #666;
+        }
+        .client-info {
+            background-color: #F3F4F6;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th {
+            background-color: #4F46E5;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        tr:hover {
+            background-color: #F9FAFB;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .totals {
+            margin-left: auto;
+            width: 300px;
+            margin-top: 20px;
+        }
+        .totals table {
+            margin-bottom: 0;
+        }
+        .totals td {
+            border: none;
+            padding: 8px 12px;
+        }
+        .total-final {
+            font-size: 14pt;
+            font-weight: bold;
+            background-color: #4F46E5;
+            color: white;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #E5E7EB;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <h1 style="margin: 0; color: #4F46E5;">{{ company_name }}</h1>
+            {% if company_siret %}
+            <p style="margin: 5px 0;">SIRET: {{ company_siret }}</p>
+            {% endif %}
+            {% if company_vat %}
+            <p style="margin: 5px 0;">TVA: {{ company_vat }}</p>
+            {% endif %}
+            {% if company_address %}
+            <p style="margin: 5px 0;">{{ company_address }}</p>
+            {% endif %}
+        </div>
+        <div class="invoice-info">
+            <div class="invoice-title">FACTURE</div>
+            <div class="invoice-number">N° {{ invoice_number }}</div>
+            <p style="margin: 10px 0;">Date: {{ date_issued }}</p>
+            <p style="margin: 10px 0;">Échéance: {{ date_due }}</p>
+        </div>
+    </div>
+
+    <div class="client-info">
+        <h3 style="margin-top: 0; color: #4F46E5;">Client</h3>
+        <p style="margin: 5px 0;"><strong>{{ customer_name }}</strong></p>
+        {% if customer_siret %}
+        <p style="margin: 5px 0;">SIRET: {{ customer_siret }}</p>
+        {% endif %}
+        {% if customer_vat %}
+        <p style="margin: 5px 0;">TVA: {{ customer_vat }}</p>
+        {% endif %}
+        {% if customer_address %}
+        <p style="margin: 5px 0;">{{ customer_address }}</p>
+        {% endif %}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="text-right">Quantité</th>
+                <th class="text-right">Prix unitaire HT</th>
+                <th class="text-right">TVA</th>
+                <th class="text-right">Total HT</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in lines %}
+            <tr>
+                <td>{{ line.description }}</td>
+                <td class="text-right">{{ line.quantity }}</td>
+                <td class="text-right">{{ "%.2f"|format(line.unit_price) }} €</td>
+                <td class="text-right">{{ "%.2f"|format(line.vat_rate) }}%</td>
+                <td class="text-right">{{ "%.2f"|format(line.amount_ht) }} €</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <table>
+            <tr>
+                <td><strong>Total HT</strong></td>
+                <td class="text-right"><strong>{{ "%.2f"|format(total_ht) }} €</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Total TVA</strong></td>
+                <td class="text-right"><strong>{{ "%.2f"|format(total_tva) }} €</strong></td>
+            </tr>
+            <tr class="total-final">
+                <td><strong>Total TTC</strong></td>
+                <td class="text-right"><strong>{{ "%.2f"|format(total_ttc) }} €</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>{{ company_name }} - SIRET: {{ company_siret }}</p>
+        <p>Cette facture est conforme au format Factur-X (norme EN 16931)</p>
+    </div>
+</body>
+</html>
