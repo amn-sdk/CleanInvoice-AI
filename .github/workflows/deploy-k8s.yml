@@ -1,0 +1,54 @@
+name: CD - Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
+    types:
+      - completed
+    branches: [main]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_PREFIX: saddika
+
+jobs:
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: tag
+        run: |
+          echo "TAG=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Update Kubernetes manifests
+        run: |
+          sed -i "s|IMAGE_CORE_API|${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/cleaninvoice-core-api:${{ steps.tag.outputs.TAG }}|g" k8s/core-api-deployment.yaml
+          sed -i "s|IMAGE_AI_SERVICE|${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/cleaninvoice-ai-service:${{ steps.tag.outputs.TAG }}|g" k8s/ai-service-deployment.yaml
+          sed -i "s|IMAGE_FRONTEND|${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/cleaninvoice-frontend:${{ steps.tag.outputs.TAG }}|g" k8s/frontend-deployment.yaml
+
+      - name: Save updated manifests
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubernetes-manifests
+          path: k8s/
+
+      - name: Deployment instructions
+        run: |
+          echo "✅ Manifests updated with image tag: ${{ steps.tag.outputs.TAG }}"
+          echo ""
+          echo "📝 To deploy to your local Minikube cluster:"
+          echo "1. Download the artifacts from this workflow run"
+          echo "2. Apply the manifests:"
+          echo "   kubectl apply -f k8s/postgres-secret.yaml"
+          echo "   kubectl apply -f k8s/core-api-configmap.yaml"
+          echo "   kubectl apply -f k8s/postgres-deployment.yaml"
+          echo "   kubectl apply -f k8s/core-api-deployment.yaml"
+          echo "   kubectl apply -f k8s/ai-service-deployment.yaml"
+          echo "   kubectl apply -f k8s/frontend-deployment.yaml"
+          echo "3. Access the application:"
+          echo "   minikube service frontend-service"
