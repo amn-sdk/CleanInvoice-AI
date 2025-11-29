@@ -11,3 +11,5 @@ langgraph
 openai
 pytesseract
 pdf2image
+langchain-openai
+langchain-core

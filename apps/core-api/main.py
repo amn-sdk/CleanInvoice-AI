@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, invoices, customers, companies, users, export, ai
+from app.routers import auth, invoices, customers, companies, users, export, ai, collections
 
 app = FastAPI(
     title="CleanInvoice Core API",
-    version="0.4.0",
+    version="0.5.0",
     description="Modern invoice management with AI-powered features and Factur-X compliance"
 )
 
@@ -25,14 +25,15 @@ app.include_router(customers.router)
 app.include_router(invoices.router)
 app.include_router(export.router)
 app.include_router(ai.router)
+app.include_router(collections.router)
 
 @app.get("/")
 def read_root():
     return {
         "message": "Welcome to CleanInvoice Core API",
-        "version": "0.4.0",
+        "version": "0.5.0",
         "docs": "/docs",
-        "features": ["Authentication", "Invoices", "PDF Export", "Factur-X", "AI OCR"]
+        "features": ["Authentication", "Invoices", "PDF Export", "Factur-X", "AI OCR", "AI Collections"]
     }
 
 @app.get("/health")

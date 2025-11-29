@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import ocr
+from app.routers import ocr, collections
 
 app = FastAPI(
     title="CleanInvoice AI Services",
-    version="0.1.0",
+    version="0.2.0",
     description="AI-powered invoice reading and collection agent"
 )
 
@@ -19,13 +19,14 @@ app.add_middleware(
 
 # Include routers
 app.include_router(ocr.router)
+app.include_router(collections.router)
 
 @app.get("/")
 def read_root():
     return {
         "message": "Welcome to CleanInvoice AI Services",
-        "version": "0.1.0",
-        "services": ["OCR Invoice Extraction"]
+        "version": "0.2.0",
+        "services": ["OCR Invoice Extraction", "AI Collection Agent"]
     }
 
 @app.get("/health")
