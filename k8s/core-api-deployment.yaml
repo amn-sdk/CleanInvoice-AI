@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: core-api
-        image: IMAGE_CORE_API
+        image: cleaninvoice/core-api:latest
         ports:
         - containerPort: 8000
         env:

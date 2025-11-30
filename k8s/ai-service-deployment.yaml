@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ai-service
-        image: IMAGE_AI_SERVICE
+        image: cleaninvoice/ai-services:latest
         ports:
         - containerPort: 8001
         env:
